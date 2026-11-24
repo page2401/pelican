@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>00. 概览与版本档案 (Pelican) · Pelican 4.12 基准实测子站</title>
+  <meta name="description" content="Python 经典 Jinja2 静态站点生成器 Pelican 4.12.0 基准实测子站。">
+  <link rel="stylesheet" href="/pelican/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="/pelican/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/pelican/">
+      <span>Pelican 4.12 基准实测子站</span>
+      <span class="engine-badge">pelican@4.12.0 · Jinja2 3.1.6</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+          <li>
+            <a class="nav-link active" href="/pelican/">
+              00. 概览与版本档案
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/03-math/">
+              03. 数学公式排版
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+              <ul>
+                <li>
+                  <span class="nav-sublabel">嵌套子章节 (nested)</span>
+                  <ul>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/01-order-and-url/">
+                          嵌套子页 A：排序前缀与 URL 纯净度权衡
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/02-sidebar-sync/">
+                          嵌套子页 B：多级子目录与侧边栏同步机制
+                        </a>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+          </li>
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: index</span>
+    <span class="meta-pill">URL: /</span>
+    <span class="meta-pill">Save_as: index.html</span>
+  </div>
+  <h1 id="pelican-4120">Pelican (<code>4.12.0</code>) 基准实测子站</h1>
+<p>本子模块由主仓 <code>page2401.github.io/docs/</code> 标准 GFM 母版<strong>最小化派生适配</strong>而来，实测 Python 生态最富盛名的经典内容/博客型静态生成器 <strong><code>pelican@4.12.0</code> + <code>Jinja2@3.1.6</code> + <code>Markdown@3.11.3</code> + <code>pymdown-extensions@13.1.2</code></strong> 在改造为多级技术文档站点时的元数据模型、路由重写机制与全离线图表/公式表现。</p>
+<h2 id="requirementstxt-vendor">精确锁定版本档案（<code>requirements.txt</code> + 本地 Vendor）</h2>
+<p>Python 构建环境通过独立虚拟环境与 <code>requirements.txt</code> 严格 <code>==</code> 锁死版本，前端 KaTeX 与 Mermaid 资源全部内聚于 <code>theme/static/vendor/</code>，实现 <strong>0 外部 CDN 请求</strong>：</p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">模块 / 依赖包</th>
+<th style="text-align: left;">精确锁定版本</th>
+<th style="text-align: left;">在本子站中的职责与实测边界</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><code>pelican</code></td>
+<td style="text-align: left;"><code>4.12.0</code></td>
+<td style="text-align: left;">Python 经典静态生成器核心（<code>pelicanconf.py</code> 可执行配置 + <code>{filename}</code> 内链校验）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>jinja2</code></td>
+<td style="text-align: left;"><code>3.1.6</code></td>
+<td style="text-align: left;">经典模板继承引擎（<code>theme/templates/base.html</code> 与 <code>page.html</code> 构建多级导航）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>markdown</code></td>
+<td style="text-align: left;"><code>3.11.3</code></td>
+<td style="text-align: left;">Python-Markdown 解析器（启用 <code>meta</code>、<code>tables</code>、<code>toc</code>、<code>admonition</code>、<code>codehilite</code>）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pymdown-extensions</code></td>
+<td style="text-align: left;"><code>13.1.2</code></td>
+<td style="text-align: left;">补齐 <code>pymdownx.details</code>、<code>pymdownx.superfences</code> 与 <code>pymdownx.arithmatex</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>pygments</code></td>
+<td style="text-align: left;"><code>2.19.2</code></td>
+<td style="text-align: left;">受 <code>pelican==4.12.0</code> 上游元数据 <code>pygments&lt;2.20.0,&gt;=2.16.1</code> 硬性封顶约束（同批 MkDocs/Sphinx 为 <code>2.21.0</code>）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>unidecode</code></td>
+<td style="text-align: left;"><code>1.4.0</code></td>
+<td style="text-align: left;">Pelican 默认用其将中文 <code>Title</code> 转写为拼音 URL（需用 <code>PATH_METADATA</code> 拦截）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>katex</code> (vendored)</td>
+<td style="text-align: left;"><code>0.19.1</code></td>
+<td style="text-align: left;">配合 <code>arithmatex (generic: True)</code> 在同源本地渲染数学公式与本地 Webfont</td>
+</tr>
+<tr>
+<td style="text-align: left;"><code>mermaid</code> (vendored)</td>
+<td style="text-align: left;"><code>12.3.0</code></td>
+<td style="text-align: left;">配合 <code>superfences</code> 自定义围栏在客户端渲染矢量图表并联动深浅色主题</td>
+</tr>
+</tbody>
+</table>
+<h2 id="_1">六大标准基准章节导览</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">章节路径</th>
+<th style="text-align: left;">测试维度</th>
+<th style="text-align: left;">相对母版 <code>docs/*.md</code> 的核心派生改造点</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><a href="/pelican/01-annotations/"><code>01-annotations.md</code></a></td>
+<td style="text-align: left;">专属标注与元数据</td>
+<td style="text-align: left;">头部必须改用无引号 <strong>MultiMarkdown <code>Key: Value</code></strong> 元数据（写 YAML 双引号会被原样保留进标题！）；提示框改写为 4 空格缩进 <code>!!!</code> / <code>???</code>；原生不解析 <code>&gt; [!NOTE]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="/pelican/02-diagrams/"><code>02-diagrams.md</code></a></td>
+<td style="text-align: left;">流程图与时序图</td>
+<td style="text-align: left;">正文代码块零改动；因 <code>pelicanconf.py</code> 是纯 Python 代码，可直接传入 <code>fence_code_format</code> 函数引用（免除 <code>mkdocs.yml</code> 的 <code>!!python/name:</code> 标签）</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="/pelican/03-math/"><code>03-math.md</code></a></td>
+<td style="text-align: left;">数学公式排版</td>
+<td style="text-align: left;">正文公式零改动；<code>pymdownx.arithmatex</code> 无损保护矩阵双反斜杠 <code>\\</code>，交由本地 KaTeX 0.19.1 排版</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="/pelican/04-directory/"><code>04-directory/</code></a></td>
+<td style="text-align: left;">目录结构与路由取舍</td>
+<td style="text-align: left;">深度拆解 Pelican 博客基因（<code>articles</code> vs <code>pages</code>）、中文 <code>Title</code> 拼音化陷阱、<code>URL</code>/<code>Save_as</code> 显式路由与 <code>{filename}</code> 内部链接协议</td>
+</tr>
+<tr>
+<td style="text-align: left;"><a href="/pelican/05-code-blocks/"><code>05-code-blocks.md</code></a></td>
+<td style="text-align: left;">高阶代码块与语法高亮</td>
+<td style="text-align: left;">借助 <code>pymdownx.superfences</code> + <code>pygments@2.19.2</code>（受 Pelican <code>&lt;2.20</code> 约束）启用 <code>title</code>、<code>hl_lines="3 7-9"</code> 与纯 CSS <code>pymdownx.tabbed</code> 标签页</td>
+</tr>
+</tbody>
+</table>
+      </article>
+    </main>
+  </div>
+
+  <script src="/pelican/theme/vendor/katex.min.js"></script>
+  <script src="/pelican/theme/vendor/auto-render.min.js"></script>
+  <script src="/pelican/theme/vendor/mermaid.min.js"></script>
+  <script src="/pelican/theme/js/init.js"></script>
+</body>
+</html>

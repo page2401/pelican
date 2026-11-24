@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>02. 流程图与时序图 · Pelican 4.12 基准实测子站</title>
+  <meta name="description" content="Pelican 4.12.0 实测：通过 pelicanconf.py 挂载 pymdownx.superfences 自定义 mermaid 围栏与本地 mermaid@12.3.0。">
+  <link rel="stylesheet" href="/pelican/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="/pelican/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/pelican/">
+      <span>Pelican 4.12 基准实测子站</span>
+      <span class="engine-badge">pelican@4.12.0 · Jinja2 3.1.6</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+          <li>
+            <a class="nav-link" href="/pelican/">
+              00. 概览与版本档案
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+          </li>
+          <li>
+            <a class="nav-link active" href="/pelican/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/03-math/">
+              03. 数学公式排版
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+              <ul>
+                <li>
+                  <span class="nav-sublabel">嵌套子章节 (nested)</span>
+                  <ul>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/01-order-and-url/">
+                          嵌套子页 A：排序前缀与 URL 纯净度权衡
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/02-sidebar-sync/">
+                          嵌套子页 B：多级子目录与侧边栏同步机制
+                        </a>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+          </li>
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: 02-diagrams</span>
+    <span class="meta-pill">URL: /02-diagrams/</span>
+    <span class="meta-pill">Save_as: 02-diagrams/index.html</span>
+  </div>
+  <h1 id="02-pelican-superfences-mermaid-1230">02. 流程图与时序图（Pelican + <code>superfences</code> + 本地 Mermaid <code>12.3.0</code>）</h1>
+<p>相比采用 YAML 配置文件、不得不书写 <code>!!python/name:pymdownx.superfences.fence_code_format</code> 特殊反序列化标签的 MkDocs，Pelican 的配置文件 <code>pelicanconf.py</code> <strong>本身就是标准 Python 模块</strong>——可直接 <code>from pymdownx.superfences import fence_code_format</code> 传入可调用对象，将母版 <code>```mermaid</code> 围栏一字不改编译为 <code>&lt;pre class="mermaid"&gt;&lt;code&gt;...&lt;/code&gt;&lt;/pre&gt;</code>，再由 <code>theme/static/vendor/mermaid.min.js</code> 在本地渲染并随深浅色主题切换重绘。</p>
+<h2 id="1-flowchart-td">1. 复杂子图与架构流程图（<code>flowchart TD</code>）</h2>
+<p>测试中文节点标签、子图嵌套（<code>subgraph</code>）、尖括号 <code>&lt;id&gt;</code> 转义安全与虚线边：</p>
+<pre class="mermaid"><code>flowchart TD
+    subgraph MainRepo["主仓库 page2401.github.io"]
+        Master["母版 docs/*.md (Pure GFM)"]
+        SubPtr["Git Submodule 指针 (sites/*)"]
+        Workbench["对比工作台源码 (main)"]
+    end
+
+    subgraph SubRepo["各独立派生子仓库 (sites/&lt;id&gt;)"]
+        SrcBranch["main 分支: 框架配置 + 派生适配版 *.md"]
+        Actions{"GitHub Actions 构建"}
+        PageBranch["page 孤儿分支: 纯静态产物 + .nojekyll"]
+        SrcBranch --&gt; Actions
+        Actions --&gt;|"自动构建发布"| PageBranch
+    end
+
+    Master -.-&gt;|"按各框架方言派生"| SrcBranch
+    SubPtr -.-&gt;|"跟踪 main 分支"| SrcBranch
+    Workbench --&gt;|"对比母版与各派生版差异"| Portal["https://page.2401.xyz/"]
+    PageBranch --&gt;|"GitHub Organization Pages"| SubSite["https://page.2401.xyz/&lt;id&gt;/"]</code></pre>
+<h2 id="2-sequencediagram">2. 编译管线交互时序图（<code>sequenceDiagram</code>）</h2>
+<p>测试多参与者生命线、<code>alt</code> 分支块及激活框（<code>activate</code>/<code>deactivate</code>）：</p>
+<pre class="mermaid"><code>sequenceDiagram
+    autonumber
+    actor Author as 文档作者
+    participant Master as 主仓母版 docs/*.md
+    participant SubGit as 子模块 main 分支
+    participant CI as GitHub Actions (Python 3.12)
+    participant Pages as GitHub Pages (page 分支)
+
+    Author-&gt;&gt;Master: 编写标准 GFM 基准母版
+    Master-&gt;&gt;SubGit: 派生适配 Pelican MultiMarkdown 头与 {filename}
+    SubGit-&gt;&gt;CI: 触发 deploy-page.yml 工作流
+    activate CI
+    alt 编译型 Python SSG (Pelican / MkDocs / Sphinx)
+        CI-&gt;&gt;CI: pelican content -o output -s pelicanconf.py
+    else 运行时引擎 (Docsify v4 / v5)
+        CI-&gt;&gt;CI: 组装原始 *.md + _sidebar.md + 锁定版本 vendor
+    end
+    CI-&gt;&gt;Pages: force_orphan 推送至孤儿分支 page
+    deactivate CI
+    Pages--&gt;&gt;Author: 同源子路径 /pelican/ 即刻生效</code></pre>
+<h2 id="3-statediagram-v2">3. 子模块同步状态机（<code>stateDiagram-v2</code>）</h2>
+<p>测试状态机语法与状态迁移说明标签：</p>
+<pre class="mermaid"><code>stateDiagram-v2
+    [*] --&gt; MasterEdited: 更新主仓母版 docs/*.md
+    MasterEdited --&gt; SubmoduleDerived: 同步派生适配至各子模块 *.md
+    SubmoduleDerived --&gt; SubmodulePushed: 子模块 commit &amp; push origin main
+    SubmodulePushed --&gt; PageDeploying: 子仓库 Actions 自动更新 page 分支
+    SubmodulePushed --&gt; MainRepoUpdated: 主仓库更新子模块指针并构建对比数据
+    PageDeploying --&gt; LiveSynced: 线上渲染与母版源码差异视图全部就绪
+    MainRepoUpdated --&gt; LiveSynced: 计算相对母版改动行数完成
+    LiveSynced --&gt; [*]</code></pre>
+      </article>
+    </main>
+  </div>
+
+  <script src="/pelican/theme/vendor/katex.min.js"></script>
+  <script src="/pelican/theme/vendor/auto-render.min.js"></script>
+  <script src="/pelican/theme/vendor/mermaid.min.js"></script>
+  <script src="/pelican/theme/js/init.js"></script>
+</body>
+</html>

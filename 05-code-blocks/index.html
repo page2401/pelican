@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>05. 高阶代码块与语法高亮 · Pelican 4.12 基准实测子站</title>
+  <meta name="description" content="实测 Pelican 4.12.0 下 Python-Markdown + pymdownx.superfences + Pygments 2.19.2 的代码块标题栏、hl_lines 行高亮、diff 着色与 === 缩进标签页。">
+  <link rel="stylesheet" href="/pelican/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="/pelican/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/pelican/">
+      <span>Pelican 4.12 基准实测子站</span>
+      <span class="engine-badge">pelican@4.12.0 · Jinja2 3.1.6</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+          <li>
+            <a class="nav-link" href="/pelican/">
+              00. 概览与版本档案
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/03-math/">
+              03. 数学公式排版
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+              <ul>
+                <li>
+                  <span class="nav-sublabel">嵌套子章节 (nested)</span>
+                  <ul>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/01-order-and-url/">
+                          嵌套子页 A：排序前缀与 URL 纯净度权衡
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/02-sidebar-sync/">
+                          嵌套子页 B：多级子目录与侧边栏同步机制
+                        </a>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <a class="nav-link active" href="/pelican/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+          </li>
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: 05-code-blocks</span>
+    <span class="meta-pill">URL: /05-code-blocks/</span>
+    <span class="meta-pill">Save_as: 05-code-blocks/index.html</span>
+  </div>
+  <h1 id="05-pelican-superfences-pygments-2192">05. 高阶代码块与语法高亮（Pelican <code>superfences</code> + Pygments <code>2.19.2</code>）</h1>
+<p>技术文档中超过 40% 的篇幅由代码块构成，但标准 CommonMark / GitHub Flavored Markdown <strong>仅定义了围栏语言标识（<code>```ts</code>）</strong>，并未定义文件名标题栏、指定行高亮、带语法着色的行级 Diff 以及多语言 Tab 代码组。本文件由标准 GFM 母版派生适配至 <strong>Pelican (<code>4.12.0</code>) + <code>pymdownx.superfences</code> (<code>13.1.2</code>) + Pygments (<code>2.19.2</code>)</strong>。</p>
+<h2 id="1">1. 代码块文件名标题栏与基础语法高亮</h2>
+<p>Pelican 原生 <code>markdown.extensions.codehilite</code> 仅能识别围栏语言名，无法在围栏首行附加文件名标题；在 <code>pelicanconf.py</code> 中挂载 <code>pymdownx.superfences</code> 与 <code>pymdownx.highlight</code> 后，即可直接书写 <code>title="scripts/resolve-route.ts" hl_lines="3 7-9" linenums="1"</code>，在 Python 构建期一步直出 <code>&lt;table class="highlighttable"&gt;</code> 标题栏、行号栏与 Pygments 静态词法类名（注：因 <code>pelican==4.12.0</code> 上游硬性声明 <code>pygments&lt;2.20.0</code>，此处运行于锁定的 <code>pygments==2.19.2</code>）：</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">scripts/resolve-route.ts</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">export</span><span class="w"> </span><span class="kd">interface</span><span class="w"> </span><span class="nx">RouteContext</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">basePath</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+<span class="hll"><span class="w">  </span><span class="nx">slug</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span>
+</span><span class="w">  </span><span class="nx">cleanUrls</span><span class="o">:</span><span class="w"> </span><span class="kt">boolean</span>
+<span class="p">}</span>
+
+<span class="hll"><span class="k">export</span><span class="w"> </span><span class="kd">function</span><span class="w"> </span><span class="nx">formatDocRoute</span><span class="p">(</span><span class="nx">ctx</span><span class="o">:</span><span class="w"> </span><span class="kt">RouteContext</span><span class="p">)</span><span class="o">:</span><span class="w"> </span><span class="kt">string</span><span class="w"> </span><span class="p">{</span>
+</span><span class="hll"><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">prefix</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">basePath</span><span class="p">.</span><span class="nx">endsWith</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">basePath</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="sb">`</span><span class="si">${</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">basePath</span><span class="si">}</span><span class="sb">/`</span>
+</span><span class="hll"><span class="w">  </span><span class="kd">const</span><span class="w"> </span><span class="nx">normalized</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">slug</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\/+|\/+$/g</span><span class="p">,</span><span class="w"> </span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</span><span class="w">  </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="nx">normalized</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="nx">normalized</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="s1">&#39;index&#39;</span><span class="p">)</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="nx">prefix</span>
+<span class="w">  </span><span class="k">return</span><span class="w"> </span><span class="nx">ctx</span><span class="p">.</span><span class="nx">cleanUrls</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="sb">`</span><span class="si">${</span><span class="nx">prefix</span><span class="si">}${</span><span class="nx">normalized</span><span class="si">}</span><span class="sb">/`</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="sb">`</span><span class="si">${</span><span class="nx">prefix</span><span class="si">}${</span><span class="nx">normalized</span><span class="si">}</span><span class="sb">.html`</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="2-hl_lines3-7-9">2. 关键行聚焦与高亮（<code>hl_lines="3 7-9"</code>）</h2>
+<p>当需要在长配置中引导读者注意第 <code>3</code> 行与第 <code>7–9</code> 行时，Python-Markdown <code>superfences</code> + Pygments 采用空格分隔的 <code>hl_lines="3 7-9"</code> 属性，将目标行包裹进 <code>&lt;span class="hll"&gt;...&lt;/span&gt;</code> 节点，配合主题 CSS 即可呈现整行高亮：</p>
+<div class="highlight"><table class="highlighttable"><tr><th colspan="2" class="filename"><span class="filename">bench.config.json</span></th></tr><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;ssg-benchmark&quot;</span><span class="p">,</span>
+<span class="hll"><span class="w">  </span><span class="nt">&quot;routeStyle&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;clean&quot;</span><span class="p">,</span>
+</span><span class="w">  </span><span class="nt">&quot;strictZeroCdn&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;markdown&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;mathEngine&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;katex&quot;</span><span class="p">,</span>
+<span class="hll"><span class="w">    </span><span class="nt">&quot;diagramEngine&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;mermaid&quot;</span><span class="p">,</span>
+</span><span class="hll"><span class="w">    </span><span class="nt">&quot;lineHighlight&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+</span><span class="hll"><span class="w">    </span><span class="nt">&quot;codeTransformers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&quot;diff&quot;</span><span class="p">,</span><span class="w"> </span><span class="s2">&quot;focus&quot;</span><span class="p">]</span>
+</span><span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></td></tr></table></div>
+<h2 id="3-pygments-diff">3. 代码增删对比着色（Pygments <code>diff</code> 词法分析器）</h2>
+<p>标准 GFM 使用独立的 <code>diff</code> 语言标识表达补丁增删；Pygments <code>DiffLexer</code> 在构建期将 <code>-</code> 行编译为 <code>.gd</code>（Generic.Deleted）、<code>+</code> 行编译为 <code>.gi</code>（Generic.Inserted），零 JavaScript 呈现增删着色，但代价是失去了底层 TypeScript 语法分词：</p>
+<div class="highlight"><span class="filename">scripts/mount-subsite.patch</span><pre><span></span><code><span class="w"> </span>export function mountSubsite(baseDir: string, subPath: string): string | null {
+<span class="gd">-  const cleanRel = decodeURIComponent(subPath).replace(/\.\./g, &#39;&#39;)</span>
+<span class="gd">-  return `${baseDir}/${cleanRel}`</span>
+<span class="gi">+  const resolvedBase = path.resolve(baseDir)</span>
+<span class="gi">+  const target = path.resolve(resolvedBase, decodeURIComponent(subPath).replace(/^\/+/, &#39;&#39;))</span>
+<span class="gi">+  return target.startsWith(`${resolvedBase}${path.sep}`) ? target : null</span>
+<span class="w"> </span>}
+</code></pre></div>
+<h2 id="4-pymdownxtabbed-css">4. 多语言运行时命令组（<code>pymdownx.tabbed</code> 纯 CSS 单选标签组）</h2>
+<p>在 <code>pelicanconf.py</code> 的 <code>MARKDOWN["extension_configs"]</code> 中补充 <code>"pymdownx.tabbed": {"alternate_style": True}</code> 并补齐 <code>.tabbed-set</code> 样式规则后，Pelican 同样能复用 Python-Markdown 生态的 <strong><code>=== "标签"</code> + 4 空格缩进</strong> 语法，以零运行时脚本渲染横向切换面板：</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:4"><input checked id="__tabbed_1_1" name="__tabbed_1" type="radio"><input id="__tabbed_1_2" name="__tabbed_1" type="radio"><input id="__tabbed_1_3" name="__tabbed_1" type="radio"><input id="__tabbed_1_4" name="__tabbed_1" type="radio"><div class="tabbed-labels"><label for="__tabbed_1_1">Node.js</label><label for="__tabbed_1_2">Deno 2</label><label for="__tabbed_1_3">Python</label><label for="__tabbed_1_4">Ruby</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>npm<span class="w"> </span>ci<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>npm<span class="w"> </span>run<span class="w"> </span>build
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>deno<span class="w"> </span>task<span class="w"> </span>build
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>pelican<span class="w"> </span>content<span class="w"> </span>-o<span class="w"> </span>output<span class="w"> </span>-s<span class="w"> </span>pelicanconf.py
+</code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="highlight"><pre><span></span><code>bundle<span class="w"> </span>install<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>bundle<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>jekyll<span class="w"> </span>build
+</code></pre></div>
+</div>
+</div>
+</div>
+<h2 id="5">5. 四大底层高亮引擎能力对照小结</h2>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">高亮引擎代表</th>
+<th style="text-align: left;">典型采用框架</th>
+<th style="text-align: left;">构建期零运行时 JS</th>
+<th style="text-align: left;">原生行号 / 行高亮</th>
+<th style="text-align: left;">保留词法着色的 Diff</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;"><strong>Shiki / Expressive Code</strong></td>
+<td style="text-align: left;">VitePress、Starlight、Fumadocs、Nextra、Rspress、Nuxt、Quartz</td>
+<td style="text-align: left;">✅ 纯静态内联样式</td>
+<td style="text-align: left;">✅ <code>{1,3-5}</code> / <code>[!code highlight]</code></td>
+<td style="text-align: left;">✅ <code>// [!code ++]</code></td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Prism.js</strong></td>
+<td style="text-align: left;">Docusaurus、VuePress、Eleventy (plugin)、Gatsby</td>
+<td style="text-align: left;">✅ 静态 Token 类名</td>
+<td style="text-align: left;">✅ <code>{1,3-5}</code> / 魔法注释</td>
+<td style="text-align: left;">⚠️ 需配 diff-highlight 插件</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Pygments / Rouge</strong></td>
+<td style="text-align: left;">MkDocs Material、Sphinx、Pelican、Jekyll</td>
+<td style="text-align: left;">✅ Python/Ruby 编译直出</td>
+<td style="text-align: left;">✅ <code>hl_lines</code> / <code>emphasize-lines</code></td>
+<td style="text-align: left;">⚠️ 仅标准 <code>diff</code> 块红绿</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Chroma / Giallo / hljs</strong></td>
+<td style="text-align: left;">Hugo (Go Chroma)、Zola (Rust Giallo)、mdBook (hljs)</td>
+<td style="text-align: left;">✅ (mdBook 为客户端 hljs)</td>
+<td style="text-align: left;">✅ Hugo/Zola 原生 <code>hl_lines</code></td>
+<td style="text-align: left;">⚠️ 仅标准 <code>diff</code> 块红绿</td>
+</tr>
+</tbody>
+</table>
+      </article>
+    </main>
+  </div>
+
+  <script src="/pelican/theme/vendor/katex.min.js"></script>
+  <script src="/pelican/theme/vendor/auto-render.min.js"></script>
+  <script src="/pelican/theme/vendor/mermaid.min.js"></script>
+  <script src="/pelican/theme/js/init.js"></script>
+</body>
+</html>

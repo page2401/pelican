@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>嵌套子页 A：排序前缀与 URL 纯净度权衡 · Pelican 4.12 基准实测子站</title>
+  <link rel="stylesheet" href="/pelican/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="/pelican/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/pelican/">
+      <span>Pelican 4.12 基准实测子站</span>
+      <span class="engine-badge">pelican@4.12.0 · Jinja2 3.1.6</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+          <li>
+            <a class="nav-link" href="/pelican/">
+              00. 概览与版本档案
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/03-math/">
+              03. 数学公式排版
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+              <ul>
+                <li>
+                  <span class="nav-sublabel">嵌套子章节 (nested)</span>
+                  <ul>
+                      <li>
+                        <a class="nav-link active" href="/pelican/04-directory/nested/01-order-and-url/">
+                          嵌套子页 A：排序前缀与 URL 纯净度权衡
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/02-sidebar-sync/">
+                          嵌套子页 B：多级子目录与侧边栏同步机制
+                        </a>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+          </li>
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: 01-order-and-url</span>
+    <span class="meta-pill">URL: /04-directory/nested/01-order-and-url/</span>
+    <span class="meta-pill">Save_as: 04-directory/nested/01-order-and-url/index.html</span>
+  </div>
+  <h1 id="a-url">嵌套子页 A：排序前缀与 URL 纯净度权衡</h1>
+<p>在母版目录 <code>docs/04-directory/nested/</code> 中，文件名使用 <code>01-order-and-url.md</code> 以保证在 Git 与代码编辑器中按阅读先后顺序排列。而在 Pelican 中，路由与文件名更是<strong>完全解耦但双向可控</strong>：</p>
+<ul>
+<li>本页未手写 <code>URL</code> 与 <code>Save_as</code>，自动命中 <code>pelicanconf.py</code> 的 <code>PATH_METADATA</code> 规则，精准生成 <code>/pelican/04-directory/nested/01-order-and-url/</code>；</li>
+<li>
+<p>如果希望在不改动本地 <code>01-</code> 有序文件名的前提下抹除线上序号，只需在头部追加一行 <code>URL: 04-directory/nested/order-and-url/</code> 与 <code>Save_as: 04-directory/nested/order-and-url/index.html</code>——且因为内部互链使用 <code>{filename}./01-order-and-url.md</code> 指向源物理路径，修改目标页 <code>URL</code> 不会导致任何内部引用断链！</p>
+</li>
+<li>
+<p><a href="/pelican/04-directory/">返回上级：《04. 目录结构与路由取舍》</a></p>
+</li>
+<li><a href="/pelican/04-directory/nested/02-sidebar-sync/">下一篇：《嵌套子页 B：多级子目录与侧边栏同步机制》</a></li>
+</ul>
+      </article>
+    </main>
+  </div>
+
+  <script src="/pelican/theme/vendor/katex.min.js"></script>
+  <script src="/pelican/theme/vendor/auto-render.min.js"></script>
+  <script src="/pelican/theme/vendor/mermaid.min.js"></script>
+  <script src="/pelican/theme/js/init.js"></script>
+</body>
+</html>

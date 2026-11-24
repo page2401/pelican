@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>01. 专属标注与元数据 · Pelican 4.12 基准实测子站</title>
+  <meta name="description" content="测试 Pelican 4.12.0 的 MultiMarkdown 无引号元数据、Python-Markdown !!! Admonition、??? Details 与 GFM Alerts 表现。">
+  <link rel="stylesheet" href="/pelican/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="/pelican/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/pelican/">
+      <span>Pelican 4.12 基准实测子站</span>
+      <span class="engine-badge">pelican@4.12.0 · Jinja2 3.1.6</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+          <li>
+            <a class="nav-link" href="/pelican/">
+              00. 概览与版本档案
+            </a>
+          </li>
+          <li>
+            <a class="nav-link active" href="/pelican/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/03-math/">
+              03. 数学公式排版
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+              <ul>
+                <li>
+                  <span class="nav-sublabel">嵌套子章节 (nested)</span>
+                  <ul>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/01-order-and-url/">
+                          嵌套子页 A：排序前缀与 URL 纯净度权衡
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/02-sidebar-sync/">
+                          嵌套子页 B：多级子目录与侧边栏同步机制
+                        </a>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+          </li>
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: 01-annotations</span>
+    <span class="meta-pill">URL: /01-annotations/</span>
+    <span class="meta-pill">Save_as: 01-annotations/index.html</span>
+  </div>
+  <h1 id="01-pelican-multimarkdown">01. 专属标注与元数据（Pelican MultiMarkdown 头 + <code>!!!</code> 缩进体系）</h1>
+<p>不同静态网站生成器对“提示框 / 标注（Callouts / Admonitions）”和页面元数据的语法约定存在显著分歧。本文件由标准 GFM 母版派生适配至 <strong>Pelican (<code>4.12.0</code>)</strong>。</p>
+<h2 id="1-frontmatter-multimarkdown-yaml">1. Frontmatter 元数据机制（MultiMarkdown 键值头而非 YAML！）</h2>
+<p>这是从现代 YAML 母版迁移至 Pelican 时最隐蔽的第一道语法陷阱——Pelican 默认挂载的 <code>markdown.extensions.meta</code> 解析的是 <strong>MultiMarkdown <code>Key: Value</code> 头部</strong>而非标准 YAML：</p>
+<ul>
+<li><strong>双引号原样残留陷阱</strong>：若直接保留母版的 <code>title: "01. 专属标注与元数据"</code>，解析器不会剥离外层引号，导致网页标题直接带出字面量双引号 <code>"01. 专属标注与元数据"</code>！派生时必须去掉引号写作 <code>Title: 01. 专属标注与元数据</code>。</li>
+<li><strong>一等公民路由控制字段</strong>：Pelican 允许在每篇文档顶部通过 <code>Slug</code>、<code>URL</code>、<code>Save_as</code>、<code>Order</code>、<code>Parent</code> 直接接管物理输出路径与模板属性（上方页面徽章实时展示了当前页解析出的 <code>Slug</code> / <code>URL</code> / <code>Save_as</code>）。</li>
+</ul>
+<h2 id="2-python-markdown-4">2. 标准提示语义块（Python-Markdown <code>!!!</code> + 4 空格缩进）</h2>
+<p>开启 <code>markdown.extensions.admonition</code> 后，Pelican 采用与 MkDocs 同源的 <strong><code>!!! &lt;类型&gt; "可选自定义标题"</code> + 4 空格缩进</strong> 块语法：</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>默认信息提示块：静态站点对比平台的每个子模块均独立维护 <code>main</code>（源码）与 <code>page</code>（构建产物）双分支，互不污染提交历史。</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">性能优化建议（自定义标题语义）</p>
+<p>在 Python-Markdown <code>admonition</code> 体系中，自定义标题包裹在英文双引号 <code>"..."</code> 内；正文多段落或列表必须严格保持 <strong>4 空格缩进</strong>，缩进回退即闭合容器。</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">版本边界注意</p>
+<p>注意区分各派系关键字与边界——VitePress / VuePress 使用成对的 <code>::: warning ... :::</code>，Astro Starlight 使用 <code>:::caution[标题]</code>，而 Pelican 与 MkDocs 均依赖缩进定界的 <code>!!! warning</code>。</p>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">不可逆分支覆盖警告</p>
+<p>自动化流水线在向 <code>page</code> 分支推送构建产物时会启用 <code>force_orphan: true</code>，切勿在 <code>page</code> 分支直接手工修改代码！</p>
+</div>
+<h2 id="3-pymdownxdetails">3. 可折叠详情容器（<code>pymdownx.details</code> 的 <code>???</code> 语法）</h2>
+<p>搭配 <code>pymdown-extensions</code> 的 <code>pymdownx.details</code> 扩展后，使用 <code>??? note "标题"</code> 加 4 空格缩进即可在折叠容器内部无缝混排 Pygments 语法高亮代码块与数学公式（若直接书写原生 HTML <code>&lt;details&gt;</code> 且不额外开启 <code>md_in_html</code>，内部 Markdown 将不会被解析）：</p>
+<details class="note">
+<summary>点击展开查看 Pelican 折叠容器源码结构</summary>
+<div class="highlight"><pre><span></span><code>Title: 示例文档
+URL: demo/
+Save_as: demo/index.html
+
+!!! tip &quot;Pelican 提示块&quot;
+    正文与代码块相对 ??? 行保持 4 空格缩进。
+</code></pre></div>
+<p>除了代码块，折叠容器内同样支持列表、表格与数学公式 <span class="arithmatex">\(f(x) = x^2 + 1\)</span>。</p>
+</details>
+<h2 id="4-github-gfm-alerts">4. GitHub 风格引用警报（GFM Alerts）跨框架直通测试</h2>
+<p>以下三段在所有派生子模块中<strong>保持母版原文一字不改</strong>，用于检验零改造直通能力（实测：Python-Markdown 遵循早期 Gruber Markdown 而非 CommonMark 规范，不仅不识别 <code>&gt; [!NOTE]</code> 语法，还会将空行分隔的连续三段 <code>&gt;</code> 引用合并进<strong>同一个 <code>&lt;blockquote&gt;</code> 内的三个 <code>&lt;p&gt;</code> 段落</strong>并裸露 <code>[!NOTE]</code> 等标记字符串）：</p>
+<blockquote>
+<p>[!NOTE]
+这是一段标准的 GitHub Flavored Markdown <code>[!NOTE]</code> 警报文本，用于检验各生成器对母版语法的零改造直通能力。</p>
+<p>[!IMPORTANT]
+跨平台迁移 Markdown 文档时，是否原生兼容 <code>&gt; [!IMPORTANT]</code> 与 <code>&gt; [!WARNING]</code> 直接决定了母版文档的派生改造成本。</p>
+<p>[!CAUTION]
+若目标生成器未内置 GFM Alert 解析器（如 VuePress v1、Starlight 默认配置、Docsify v4 旧插件），上方标记会退化为普通引用块并原样露出 <code>[!CAUTION]</code> 字符串。</p>
+</blockquote>
+      </article>
+    </main>
+  </div>
+
+  <script src="/pelican/theme/vendor/katex.min.js"></script>
+  <script src="/pelican/theme/vendor/auto-render.min.js"></script>
+  <script src="/pelican/theme/vendor/mermaid.min.js"></script>
+  <script src="/pelican/theme/js/init.js"></script>
+</body>
+</html>

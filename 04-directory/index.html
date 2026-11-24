@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>04. 目录结构与路由取舍 · Pelican 4.12 基准实测子站</title>
+  <meta name="description" content="实测 Pelican 4.12 的博客基因（articles vs pages）、Title 拼音化陷阱、显式 URL/Save_as 与 {filename} 内链机制。">
+  <link rel="stylesheet" href="/pelican/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="/pelican/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/pelican/">
+      <span>Pelican 4.12 基准实测子站</span>
+      <span class="engine-badge">pelican@4.12.0 · Jinja2 3.1.6</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+          <li>
+            <a class="nav-link" href="/pelican/">
+              00. 概览与版本档案
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/03-math/">
+              03. 数学公式排版
+            </a>
+          </li>
+          <li>
+            <a class="nav-link active" href="/pelican/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+              <ul>
+                <li>
+                  <span class="nav-sublabel">嵌套子章节 (nested)</span>
+                  <ul>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/01-order-and-url/">
+                          嵌套子页 A：排序前缀与 URL 纯净度权衡
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/02-sidebar-sync/">
+                          嵌套子页 B：多级子目录与侧边栏同步机制
+                        </a>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+          </li>
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: 04-directory</span>
+    <span class="meta-pill">URL: /04-directory/</span>
+    <span class="meta-pill">Save_as: 04-directory/index.html</span>
+  </div>
+  <h1 id="04-pelican">04. 目录结构与路由取舍（Pelican 博客模型改造为文档树实录）</h1>
+<p>Pelican 诞生之初是为按时间流归档的<strong>个人技术博客</strong>设计的。将母版多级目录 <code>docs/04-directory/nested/</code> 迁入 Pelican 时，必须正面跨过四道标志性的架构鸿沟：</p>
+<ol>
+<li><strong>博客双轨模型（<code>articles</code> vs <code>pages</code>）</strong>：Pelican 默认将 <code>content/</code> 下的 Markdown 当作新闻文章（<code>ARTICLE_PATHS = [""]</code>），没有写 <code>Date:</code> 字段会直接报错跳过；同时 <code>DIRECT_TEMPLATES = ['index', 'tags', 'categories', 'authors', 'archives']</code> 会强行用文章列表页覆盖根 <code>output/index.html</code>。要构建纯粹的技术文档站，必须在 <code>pelicanconf.py</code> 中反转配置：<code>ARTICLE_PATHS = []</code>、<code>PAGE_PATHS = [""]</code>、<code>DIRECT_TEMPLATES = []</code>。</li>
+<li><strong>默认 <code>Title</code> 汉语拼音转写陷阱（<code>SLUGIFY_SOURCE = "title"</code>）</strong>：不同于现代文档框架按文件路径生成路由，Pelican 默认调用 <code>Unidecode</code> 从文章标题推导 <code>slug</code> 并输出到扁平的 <code>pages/{slug}.html</code>——例如《01. 专属标注与元数据》默认会变成惊人的 <code>/pages/01-zhuan-shu-biao-zhu-yu-yuan-shu-ju.html</code>！必须配置正则 <code>PATH_METADATA = r"(?P&lt;path_no_ext&gt;.*)\..*"</code> 配合 <code>PAGE_URL = "{path_no_ext}/"</code> 与 <code>PAGE_SAVE_AS = "{path_no_ext}/index.html"</code> 才能还原目录层级。</li>
+<li><strong>目录首页 <code>index.md</code> 仍需显式 <code>URL</code> / <code>Save_as</code> 覆盖</strong>：即便启用了 <code>{path_no_ext}/index.html</code>，<code>04-directory/index.md</code> 提取出的无后缀路径是 <code>04-directory/index</code>，若不在本页头部显式声明 <code>URL: 04-directory/</code> 与 <code>Save_as: 04-directory/index.html</code>，产物会多出一层冗余的 <code>/04-directory/index/</code>。</li>
+<li><strong><code>{filename}</code> 构建期链接指令与扁平 <code>pages</code> 列表</strong>：直接写 <code>./nested/01-order-and-url.md</code> 不会被 Pelican 重写；必须加上 <code>{filename}</code> 前缀（如 <code>{filename}./nested/01-order-and-url.md</code>）触发构建期寻址与 <code>SITEURL</code> 拼接（代价是在 GitHub / VS Code 中无法直接点击跳转）。此外 <code>PagesGenerator</code> 默认将所有子目录拍平为一维 <code>pages</code> 列表，需配合自定义 <code>Order</code> + <code>Parent</code> 元数据在 Jinja2 模板中重建树形侧边栏。</li>
+</ol>
+<h2 id="pelican-filename">嵌套子文档入口（采用 Pelican <code>{filename}</code> 内部链接协议）</h2>
+<ul>
+<li><a href="/pelican/04-directory/nested/01-order-and-url/">进入子文档 A：排序前缀与 URL 纯净度权衡</a></li>
+<li><a href="/pelican/04-directory/nested/02-sidebar-sync/">进入子文档 B：多级子目录与侧边栏同步机制</a></li>
+</ul>
+      </article>
+    </main>
+  </div>
+
+  <script src="/pelican/theme/vendor/katex.min.js"></script>
+  <script src="/pelican/theme/vendor/auto-render.min.js"></script>
+  <script src="/pelican/theme/vendor/mermaid.min.js"></script>
+  <script src="/pelican/theme/js/init.js"></script>
+</body>
+</html>

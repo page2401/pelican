@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>嵌套子页 B：多级子目录与侧边栏同步机制 · Pelican 4.12 基准实测子站</title>
+  <link rel="stylesheet" href="/pelican/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="/pelican/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/pelican/">
+      <span>Pelican 4.12 基准实测子站</span>
+      <span class="engine-badge">pelican@4.12.0 · Jinja2 3.1.6</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+          <li>
+            <a class="nav-link" href="/pelican/">
+              00. 概览与版本档案
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/03-math/">
+              03. 数学公式排版
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+              <ul>
+                <li>
+                  <span class="nav-sublabel">嵌套子章节 (nested)</span>
+                  <ul>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/01-order-and-url/">
+                          嵌套子页 A：排序前缀与 URL 纯净度权衡
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link active" href="/pelican/04-directory/nested/02-sidebar-sync/">
+                          嵌套子页 B：多级子目录与侧边栏同步机制
+                        </a>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+          </li>
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: 02-sidebar-sync</span>
+    <span class="meta-pill">URL: /04-directory/nested/02-sidebar-sync/</span>
+    <span class="meta-pill">Save_as: 04-directory/nested/02-sidebar-sync/index.html</span>
+  </div>
+  <h1 id="b">嵌套子页 B：多级子目录与侧边栏同步机制</h1>
+<p>与自带侧边栏概念的文档专用生成器（MkDocs、Starlight、Docusaurus）不同，Pelican 内核只有一维列表 <code>pages</code>（默认设置 <code>PAGE_ORDER_BY = "basename"</code> 甚至只按纯文件名排序，会把深层目录里的 <code>01-order-and-url.md</code> 混排到根级的 <code>01-annotations.md</code> 旁边！）。</p>
+<p>在本子站中，我们利用 Pelican 极度开放的任意元数据透传特性，在子页头部声明 <code>Parent: 04-directory</code> 与 <code>Order: 04.2</code>，再由 <code>theme/templates/base.html</code> 中的 Jinja2 过滤器 <code>selectattr("parent", "equalto", p.slug) | sort(attribute="order")</code> 动态组装出中文分组导航树——无需引入任何第三方插件即可避免孤岛页。</p>
+<ul>
+<li><a href="/pelican/04-directory/nested/01-order-and-url/">返回上一篇：《嵌套子页 A：排序前缀与 URL 纯净度权衡》</a></li>
+<li><a href="/pelican/04-directory/">返回上级：《04. 目录结构与路由取舍》</a></li>
+</ul>
+      </article>
+    </main>
+  </div>
+
+  <script src="/pelican/theme/vendor/katex.min.js"></script>
+  <script src="/pelican/theme/vendor/auto-render.min.js"></script>
+  <script src="/pelican/theme/vendor/mermaid.min.js"></script>
+  <script src="/pelican/theme/js/init.js"></script>
+</body>
+</html>

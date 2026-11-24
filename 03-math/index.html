@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>03. 数学公式排版 · Pelican 4.12 基准实测子站</title>
+  <meta name="description" content="Pelican 4.12.0 实测：启用 pymdownx.arithmatex (generic: True) 保护反斜杠并配合本地 KaTeX 0.19.1 渲染。">
+  <link rel="stylesheet" href="/pelican/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="/pelican/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/pelican/">
+      <span>Pelican 4.12 基准实测子站</span>
+      <span class="engine-badge">pelican@4.12.0 · Jinja2 3.1.6</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+          <li>
+            <a class="nav-link" href="/pelican/">
+              00. 概览与版本档案
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/01-annotations/">
+              01. 专属标注与元数据
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/02-diagrams/">
+              02. 流程图与时序图
+            </a>
+          </li>
+          <li>
+            <a class="nav-link active" href="/pelican/03-math/">
+              03. 数学公式排版
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/04-directory/">
+              04. 目录结构与路由取舍
+            </a>
+              <ul>
+                <li>
+                  <span class="nav-sublabel">嵌套子章节 (nested)</span>
+                  <ul>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/01-order-and-url/">
+                          嵌套子页 A：排序前缀与 URL 纯净度权衡
+                        </a>
+                      </li>
+                      <li>
+                        <a class="nav-link" href="/pelican/04-directory/nested/02-sidebar-sync/">
+                          嵌套子页 B：多级子目录与侧边栏同步机制
+                        </a>
+                      </li>
+                  </ul>
+                </li>
+              </ul>
+          </li>
+          <li>
+            <a class="nav-link" href="/pelican/05-code-blocks/">
+              05. 高阶代码块与语法高亮
+            </a>
+          </li>
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: 03-math</span>
+    <span class="meta-pill">URL: /03-math/</span>
+    <span class="meta-pill">Save_as: 03-math/index.html</span>
+  </div>
+  <h1 id="03-pelican-arithmatex-katex-0191">03. 数学公式排版（Pelican <code>arithmatex</code> + 本地 KaTeX <code>0.19.1</code>）</h1>
+<p>若直接在裸 Python-Markdown 中混写 LaTeX 数学公式，解析器会把下划线 <code>_</code> 误认为斜体、把矩阵换行双反斜杠 <code>\\</code> 吞噬为单反斜杠。本子站在 <code>pelicanconf.py</code> 中启用 <code>pymdownx.arithmatex: {"generic": True}</code>，在 Markdown 词法阶段将 <code>$...$</code> 与 <code>$$...$$</code> 原封不动封装进 <code>.arithmatex</code> 节点，从而对母版公式实现<strong>正文零改动无损排版</strong>。</p>
+<h2 id="1">1. 行内公式与中英文混排基线对齐</h2>
+<p>考察重点：行内公式在中文字号下的缩放比例、上下标是否撑乱行高，以及分数与根号在行内的紧凑度。</p>
+<ul>
+<li>质能方程 <span class="arithmatex">\(E = mc^2\)</span> 与欧拉恒等式 <span class="arithmatex">\(e^{i\pi} + 1 = 0\)</span> 嵌入在连续中文段落中的视觉基线表现。</li>
+<li>归并排序的平均时间复杂度为 <span class="arithmatex">\(\mathcal{O}(n \log n)\)</span>，而空间复杂度为 <span class="arithmatex">\(\Theta(n)\)</span>；当输入规模满足 <span class="arithmatex">\(n \ge 2^{16}\)</span> 时，常数因子差异显著。</li>
+<li>贝叶斯条件概率公式行内排印：<span class="arithmatex">\(P(A \mid B) = \frac{P(B \mid A)\,P(A)}{P(B)}\)</span>，以及带根号的欧氏距离 <span class="arithmatex">\(d(\mathbf{x}, \mathbf{y}) = \sqrt{\sum_{i=1}^{n}(x_i - y_i)^2}\)</span>。</li>
+</ul>
+<h2 id="2-aligned">2. 多行等式对齐推导（<code>aligned</code> 环境）</h2>
+<p>测试 <code>\begin{aligned} ... \end{aligned}</code> 多行对齐、积分算子与括号自动缩放 <code>\left( ... \right)</code>：</p>
+<div class="arithmatex">\[
+\begin{aligned}
+I^2 &amp;= \left( \int_{-\infty}^{+\infty} e^{-x^2}\,\mathrm{d}x \right) \left( \int_{-\infty}^{+\infty} e^{-y^2}\,\mathrm{d}y \right) \\
+    &amp;= \iint_{\mathbb{R}^2} e^{-(x^2 + y^2)}\,\mathrm{d}x\,\mathrm{d}y \\
+    &amp;= \int_{0}^{2\pi} \int_{0}^{+\infty} e^{-r^2} r\,\mathrm{d}r\,\mathrm{d}\theta \\
+    &amp;= 2\pi \cdot \left[ -\frac{1}{2} e^{-r^2} \right]_{0}^{+\infty} = \pi \implies I = \sqrt{\pi}
+\end{aligned}
+\]</div>
+<h2 id="3-bmatrix">3. 矩阵运算与注意力机制（<code>bmatrix</code> 环境）</h2>
+<p>测试缩放点积注意力公式及矩阵乘法排版：</p>
+<div class="arithmatex">\[
+\mathrm{Attention}(Q, K, V) = \mathrm{softmax}\!\left(\frac{QK^\top}{\sqrt{d_k}}\right)V
+\]</div>
+<div class="arithmatex">\[
+\mathbf{J}_{\mathbf{f}}(\mathbf{x}) =
+\begin{bmatrix}
+\dfrac{\partial f_1}{\partial x_1} &amp; \dfrac{\partial f_1}{\partial x_2} &amp; \cdots &amp; \dfrac{\partial f_1}{\partial x_n} \\[6pt]
+\dfrac{\partial f_2}{\partial x_1} &amp; \dfrac{\partial f_2}{\partial x_2} &amp; \cdots &amp; \dfrac{\partial f_2}{\partial x_n} \\[4pt]
+\vdots &amp; \vdots &amp; \ddots &amp; \vdots \\[4pt]
+\dfrac{\partial f_m}{\partial x_1} &amp; \dfrac{\partial f_m}{\partial x_2} &amp; \cdots &amp; \dfrac{\partial f_m}{\partial x_n}
+\end{bmatrix}
+\]</div>
+<h2 id="4-cases">4. 分段函数与优化目标（<code>cases</code> 环境）</h2>
+<p>测试 Huber Loss 分段函数与花括号对齐：</p>
+<div class="arithmatex">\[
+\mathcal{L}_{\delta}(y, \hat{y}) =
+\begin{cases}
+\dfrac{1}{2}(y - \hat{y})^2, &amp; \text{if } |y - \hat{y}| \le \delta, \\[8pt]
+\delta \cdot \left(|y - \hat{y}| - \dfrac{1}{2}\delta\right), &amp; \text{otherwise.}
+\end{cases}
+\]</div>
+<h2 id="5">5. 字面量美元符号 <code>\$</code> 转义边界测试</h2>
+<p>在启用 <code>$...$</code> 行内数学公式后，同一段落出现两个价格数字（例如基础套餐 $29/月 与专业版 $99/月）时，若未正确转义 <code>\$</code> 会把中间的中文误解析为斜体公式；而在反引号代码片段中编写环境变量 <code>$HOME</code> 或 <code>awk '{print $1}'</code> 则应原样保留，无需反斜杠转义。</p>
+      </article>
+    </main>
+  </div>
+
+  <script src="/pelican/theme/vendor/katex.min.js"></script>
+  <script src="/pelican/theme/vendor/auto-render.min.js"></script>
+  <script src="/pelican/theme/vendor/mermaid.min.js"></script>
+  <script src="/pelican/theme/js/init.js"></script>
+</body>
+</html>

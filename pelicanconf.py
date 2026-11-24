@@ -47,8 +47,15 @@ MARKDOWN = {
             "css_class": "highlight",
             "guess_lang": False,
         },
+        "pymdownx.highlight": {
+            "css_class": "highlight",
+            "guess_lang": False,
+        },
         "pymdownx.arithmatex": {
             "generic": True,
+        },
+        "pymdownx.tabbed": {
+            "alternate_style": True,
         },
         "pymdownx.superfences": {
             "custom_fences": [

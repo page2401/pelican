@@ -25,7 +25,7 @@ Python 构建环境通过独立虚拟环境与 `requirements.txt` 严格 `==` �
 | `katex` (vendored) | `0.19.1` | 配合 `arithmatex (generic: True)` 在同源本地渲染数学公式与本地 Webfont |
 | `mermaid` (vendored) | `12.3.0` | 配合 `superfences` 自定义围栏在客户端渲染矢量图表并联动深浅色主题 |
 
-## 五大标准基准章节导览
+## 六大标准基准章节导览
 
 | 章节路径 | 测试维度 | 相对母版 `docs/*.md` 的核心派生改造点 |
 | :--- | :--- | :--- |
@@ -33,3 +33,4 @@ Python 构建环境通过独立虚拟环境与 `requirements.txt` 严格 `==` �
 | [`02-diagrams.md`]({filename}./02-diagrams.md) | 流程图与时序图 | 正文代码块零改动；因 `pelicanconf.py` 是纯 Python 代码，可直接传入 `fence_code_format` 函数引用（免除 `mkdocs.yml` 的 `!!python/name:` 标签） |
 | [`03-math.md`]({filename}./03-math.md) | 数学公式排版 | 正文公式零改动；`pymdownx.arithmatex` 无损保护矩阵双反斜杠 `\\`，交由本地 KaTeX 0.19.1 排版 |
 | [`04-directory/`]({filename}./04-directory/index.md) | 目录结构与路由取舍 | 深度拆解 Pelican 博客基因（`articles` vs `pages`）、中文 `Title` 拼音化陷阱、`URL`/`Save_as` 显式路由与 `{filename}` 内部链接协议 |
+| [`05-code-blocks.md`]({filename}./05-code-blocks.md) | 高阶代码块与语法高亮 | 借助 `pymdownx.superfences` + `pygments@2.19.2`（受 Pelican `<2.20` 约束）启用 `title`、`hl_lines="3 7-9"` 与纯 CSS `pymdownx.tabbed` 标签页 |

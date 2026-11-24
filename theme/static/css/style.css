@@ -418,6 +418,141 @@ html.dark .highlight .mf,
 html.dark .highlight .na,
 html.dark .highlight .nv { color: #79c0ff; }
 
+/* Pygments line highlight (.hll), diff (.gd/.gi), filename header & linenums table */
+.highlight {
+  margin: 1rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--code-bg);
+  overflow: hidden;
+}
+
+.prose .highlight pre {
+  margin: 0;
+  border: none;
+  border-radius: 0;
+}
+
+.highlight > span.filename,
+.prose table.highlighttable th.filename {
+  display: block;
+  padding: 0.42rem 0.95rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: var(--fg-muted);
+  background: var(--bg-elevated);
+  border: none;
+  border-bottom: 1px solid var(--border);
+}
+
+.prose table.highlighttable th.filename {
+  display: table-cell;
+}
+
+.prose table.highlighttable {
+  margin: 0;
+  width: 100%;
+  border: none;
+}
+
+.prose table.highlighttable td {
+  border: none;
+  padding: 0;
+  vertical-align: top;
+}
+
+.prose table.highlighttable td.linenos {
+  width: 1%;
+  user-select: none;
+  border-right: 1px solid var(--border);
+  color: var(--fg-muted);
+}
+
+.prose table.highlighttable td.linenos pre {
+  padding: 0.95rem 0.65rem;
+  text-align: right;
+}
+
+.highlight .hll {
+  display: inline-block;
+  width: 100%;
+  background: rgba(210, 153, 34, 0.16);
+}
+
+.highlight .gd {
+  color: var(--caution-border);
+  background: var(--caution-bg);
+}
+
+.highlight .gi {
+  color: var(--tip-border);
+  background: var(--tip-bg);
+}
+
+/* PyMdown Extensions pymdownx.tabbed (alternate_style: True) */
+.tabbed-set.tabbed-alternate {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 1.15rem 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-soft);
+  overflow: hidden;
+}
+
+.tabbed-set.tabbed-alternate > input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.tabbed-set.tabbed-alternate > .tabbed-labels {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+}
+
+.tabbed-set.tabbed-alternate > .tabbed-labels > label {
+  cursor: pointer;
+  padding: 0.48rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--fg-muted);
+  border-bottom: 2px solid transparent;
+}
+
+.tabbed-set.tabbed-alternate > .tabbed-content {
+  width: 100%;
+}
+
+.tabbed-set.tabbed-alternate > .tabbed-content > .tabbed-block {
+  display: none;
+  padding: 0.85rem 1rem;
+}
+
+.tabbed-set.tabbed-alternate > .tabbed-content > .tabbed-block > .highlight:first-child:last-child {
+  margin: 0;
+}
+
+.tabbed-set.tabbed-alternate > input:nth-of-type(1):checked ~ .tabbed-labels > label:nth-of-type(1),
+.tabbed-set.tabbed-alternate > input:nth-of-type(2):checked ~ .tabbed-labels > label:nth-of-type(2),
+.tabbed-set.tabbed-alternate > input:nth-of-type(3):checked ~ .tabbed-labels > label:nth-of-type(3),
+.tabbed-set.tabbed-alternate > input:nth-of-type(4):checked ~ .tabbed-labels > label:nth-of-type(4) {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+
+.tabbed-set.tabbed-alternate > input:nth-of-type(1):checked ~ .tabbed-content > .tabbed-block:nth-of-type(1),
+.tabbed-set.tabbed-alternate > input:nth-of-type(2):checked ~ .tabbed-content > .tabbed-block:nth-of-type(2),
+.tabbed-set.tabbed-alternate > input:nth-of-type(3):checked ~ .tabbed-content > .tabbed-block:nth-of-type(3),
+.tabbed-set.tabbed-alternate > input:nth-of-type(4):checked ~ .tabbed-content > .tabbed-block:nth-of-type(4) {
+  display: block;
+}
+
 .pelican-mermaid {
   margin: 1.35rem 0;
   padding: 1rem;

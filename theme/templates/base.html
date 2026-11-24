@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITENAME }}{% endblock %}</title>
+  {% block meta %}{% endblock %}
+  <link rel="stylesheet" href="{{ SITEURL }}/theme/vendor/katex.min.css">
+  <link rel="stylesheet" href="{{ SITEURL }}/theme/css/style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ SITEURL }}/">
+      <span>{{ SITENAME }}</span>
+      <span class="engine-badge">{{ SITESUBTITLE }}</span>
+    </a>
+    <button id="theme-toggle" class="theme-btn" type="button">深色模式</button>
+  </header>
+
+  <div class="layout">
+    <aside class="sidebar" aria-label="文档章节导航">
+      <div class="sidebar-group-title">基准实测章节</div>
+      <ul>
+        {% for p in pages | selectattr("parent", "undefined") | sort(attribute="order") %}
+          {% set p_href = SITEURL ~ "/" ~ p.url %}
+          {% set is_active = (page is defined and page.source_path == p.source_path) %}
+          <li>
+            <a class="nav-link{% if is_active %} active{% endif %}" href="{{ p_href }}">
+              {{ p.nav_title | default(p.title) }}
+            </a>
+            {% set children = pages | selectattr("parent", "defined") | selectattr("parent", "equalto", p.slug) | sort(attribute="order") | list %}
+            {% if children %}
+              <ul>
+                <li>
+                  <span class="nav-sublabel">{{ p.child_group | default("嵌套子章节 (nested)") }}</span>
+                  <ul>
+                    {% for child in children %}
+                      {% set c_href = SITEURL ~ "/" ~ child.url %}
+                      {% set c_active = (page is defined and page.source_path == child.source_path) %}
+                      <li>
+                        <a class="nav-link{% if c_active %} active{% endif %}" href="{{ c_href }}">
+                          {{ child.nav_title | default(child.title) }}
+                        </a>
+                      </li>
+                    {% endfor %}
+                  </ul>
+                </li>
+              </ul>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    <main class="content-wrap">
+      <article class="prose">
+        {% block content %}{% endblock %}
+      </article>
+    </main>
+  </div>
+
+  <script src="{{ SITEURL }}/theme/vendor/katex.min.js"></script>
+  <script src="{{ SITEURL }}/theme/vendor/auto-render.min.js"></script>
+  <script src="{{ SITEURL }}/theme/vendor/mermaid.min.js"></script>
+  <script src="{{ SITEURL }}/theme/js/init.js"></script>
+</body>
+</html>

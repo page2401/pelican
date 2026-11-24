@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} · {{ SITENAME }}{% endblock %}
+
+{% block meta %}
+  {% if page.description %}
+  <meta name="description" content="{{ page.description }}">
+  {% endif %}
+{% endblock %}
+
+{% block content %}
+  <div class="doc-meta" aria-label="Pelican 页面路由元数据">
+    <span class="meta-pill">Slug: {{ page.slug }}</span>
+    <span class="meta-pill">URL: /{{ page.url }}</span>
+    <span class="meta-pill">Save_as: {{ page.save_as }}</span>
+  </div>
+  {{ page.content }}
+{% endblock %}
